@@ -26,7 +26,7 @@ SECRET_KEY = '7za!43o)z1q3z*2d-m!d5iqr0=*yrl0&y_)gxjy3&+rb0%pi%^'
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['http://ec2-18-223-113-64.us-east-2.compute.amazonaws.com','*']
 CORS_ORIGIN_ALLOW_ALL = True
 
 

@@ -104,6 +104,7 @@ def createJob():
         return(transcribe_json)
 
 def start(file_,file_name):
+    print(file_,file_name)
     global FILE_NAME
     global FILE_PATH
     global transcribe_job_name
@@ -123,3 +124,5 @@ def start(file_,file_name):
     return data 
 
 #start('../media/Voices/voize.wav')
+
+#django/BBVAHackathon$

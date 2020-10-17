@@ -3,13 +3,13 @@ from rest_framework.views import APIView as API
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from .models import Users
-from .serializer import UserSerializer, UsersVoiceTrySerializer
+from .serializer import UserSerializer, UsersVoiceTrySerializer, UsersFaceTrySerializer
 from random import randrange
 import requests
 import json
 
-from .voicerecognition import start
-
+from .voicerecognition import start as voice_start
+from .facerecogniion import start as face_start
 class UsersCRUD(API):
     permission_classes = ()
     def post(self, request):
@@ -83,14 +83,17 @@ class VoiceRecognition(API):
         data = request.data
         user_id = data['id']
         voice_try   = data['voice']
-        
+        face_try   = data['face']
+
         user  = Users.objects.filter(id = user_id)
         user  = user[0]
         voice = user.voice
         voice_name = 'media/' + voice.name
+        face = user.face_1
+        face_name = 'media/' + face.name
         
-        
-        url = 'https://speaker-recognition.herokuapp.com/enrollVoice/1111'
+        ####################### Voice #####################################
+        url = 'https://speaker-recognition.herokuapp.com/enrollVoice/{}'.format(user_id)
         files = {
             "audio": open(voice_name, 'rb'),
             }
@@ -110,7 +113,7 @@ class VoiceRecognition(API):
         voice_name = serializer.data['voice']
         voice_name = voice_name[1:]
 
-        url = 'https://speaker-recognition.herokuapp.com/verifyVoice/1111'
+        url = 'https://speaker-recognition.herokuapp.com/verifyVoice/{}'.format(user_id)
         files = {
             "audio": open(voice_name, 'rb'),
             }
@@ -120,16 +123,55 @@ class VoiceRecognition(API):
          
         r = requests.post(url, files=files, data=values)
         try:
-            data = start(voice_name,voice_name[17:])
-            data = data['results']['transcripts'][0]['transcript']
-        except:
-            data = False 
+            
+            word = voice_start(voice_name,voice_name[16:])
+            
+            word = word['results']['transcripts'][0]['transcript']
+        except Exception as e:
+            print(e)
+            word = False 
         
-        
-        response = {
-            "voice": r.json(),
-            "word":data
+        ####################  Face ####################################3
+        data = {
+            'user': user_id,
+            'face': face_try
         }
+        serializer = UsersFaceTrySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+       
+        
+        face_name_try = serializer.data['face']
+        face_name_try = face_name_try[1:]
+        
+        
+        #print(serializer.data)
+        #voice_name = serializer.data['voice']
+        #voice_name = voice_name[1:]
+        
+        try:
+            face_flag = face_start(face_name,face_name_try)
+        except Exception as e:
+            
+            face_flag = False
+
+        
+        try:
+            voice = r.json()
+            
+            if voice["Message"] == "Granted":
+                voice = True
+            else:
+                voice = False
+        except:
+            voice = False
+
+        response = {
+            "voice": voice,
+            "word":word,
+            "face":face_flag
+        }
+        
         return Response(response)
     
     

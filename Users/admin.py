@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as MyUserAdmin
 
-from .models import Users, UsersVoiceTry
+from .models import Users, UsersVoiceTry, UsersFaceTry
 
 @admin.register(Users)
 class UserAdmin(MyUserAdmin):
@@ -29,3 +29,8 @@ class UsersVoiceTryAdmin(admin.ModelAdmin):
     list_display = ('user','created_dt')
 
 admin.site.register(UsersVoiceTry, UsersVoiceTryAdmin)
+
+class UsersFaceTryAdmin(admin.ModelAdmin):
+    list_display = ('user','created_dt')
+
+admin.site.register(UsersFaceTry, UsersFaceTryAdmin)

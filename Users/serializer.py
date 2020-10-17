@@ -1,5 +1,5 @@
 #from django.contrib.auth.models import User
-from .models import Users, UsersVoiceTry
+from .models import Users, UsersVoiceTry, UsersFaceTry
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from rest_framework.authtoken.models import Token
@@ -34,4 +34,9 @@ class UserSerializer(serializers.ModelSerializer):
 class UsersVoiceTrySerializer(serializers.ModelSerializer):
     class Meta:
         model = UsersVoiceTry
+        fields = '__all__'
+
+class UsersFaceTrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsersFaceTry
         fields = '__all__'

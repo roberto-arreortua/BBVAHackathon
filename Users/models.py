@@ -25,4 +25,16 @@ class UsersVoiceTry(models.Model):
         verbose_name_plural = 'Reconocimientos de voces'
     
     def __str__(self):
-        return self.user
+        return self.user.username
+
+class UsersFaceTry(models.Model):
+    user        = models.ForeignKey(Users,on_delete=models.SET_NULL,verbose_name="Usuario", null = True, blank=True)
+    face       = models.FileField(upload_to="FaceTry", default = None, null = True, blank = True)
+    created_dt  = models.DateTimeField(auto_now=True, verbose_name="Fecha", editable=False)
+
+    class Meta:
+        verbose_name = 'Reconocimiento de rostro'
+        verbose_name_plural = 'Reconocimientos de rostros'
+    
+    def __str__(self):
+        return self.user.username
