@@ -7,6 +7,8 @@ urlpatterns = [
     path('login/', Login.as_view(),name='user_login'),
     path('speechrecognition/', VoiceRecognition.as_view(),name='user_login'),
     path('login_archu/', LoginBBVArchuletas.as_view(),name='archuleta_login'),
+    path('information/', UsersInformation.as_view(),name='archuleta_login'),
+    
 ]
 
 #Custom titles for admin

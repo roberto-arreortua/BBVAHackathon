@@ -22,6 +22,12 @@ import threading
 
 class UsersCRUD(API):
     permission_classes = ()
+    def get(self,request):
+        data    = request.data
+        exist_emial = Users.objects.filter(email = data['email'])
+
+        return Response(exist_emial.values())
+
     def post(self, request):
         data    = request.data
         exist_emial = Users.objects.filter(email = data['email'])
@@ -50,7 +56,15 @@ class UsersCRUD(API):
             })
 
 
+class UsersInformation(API):
+    permission_classes = ()
+    def post(self,request):
+        data    = request.data
+        exist_emial = Users.objects.filter(email = data['email'])
 
+        return Response(exist_emial.values())
+
+    
 
 
 
@@ -83,10 +97,10 @@ class Login(API):
         worlds = ["mundo.", "chimpance.","banco.", "robot.", "automovil.", "teclado.","cuaderno.","celular."]
 
         random_value = randrange(len(worlds)-1)
-        
-        user.token = worlds[random_value]
+        extra = "hola, soy "
+        user.token = extra + worlds[random_value]
         user.save()
-        return {"ok":True, "token": worlds[random_value], "id":user.id, "username":user.username, "email":user.email}
+        return {"ok":True, "token": extra + worlds[random_value], "id":user.id, "username":user.username, "email":user.email}
 
 class LoginBBVArchuletas(API):
     permission_classes = ()
@@ -118,7 +132,7 @@ class VoiceRecognition(API):
         user  = user[0]
         token = user.token.lower()
         voice = user.voice
-        email = user.email
+        
         voice_name = 'media/' + voice.name
         face = user.face_1
         face_name = 'media/' + face.name
