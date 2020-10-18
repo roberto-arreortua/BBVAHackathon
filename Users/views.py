@@ -16,6 +16,9 @@ from HackBBVA.settings import EMAIL_HOST_USER
 from django.core.mail import EmailMultiAlternatives
 from .email import message_email
 
+import websockets
+import asyncio
+import threading
 
 class UsersCRUD(API):
     permission_classes = ()
@@ -115,6 +118,7 @@ class VoiceRecognition(API):
         user  = user[0]
         token = user.token.lower()
         voice = user.voice
+        email = user.email
         voice_name = 'media/' + voice.name
         face = user.face_1
         face_name = 'media/' + face.name
@@ -208,7 +212,32 @@ class VoiceRecognition(API):
             "word":word,
             "face":face_flag
         }
-        
+        ok = voice and word and face_flag
+        self.notification(user.email,ok)
+
         return Response(response)
     
+    async def web_socket_send(self,socket_server,message):
+        async with websockets.connect(socket_server) as socket:
+            
+            await socket.send(message)    
     
+    
+    
+    def notification(self, email, ok):
+       
+        name = ""
+        for i in email:
+            if i == "@":
+                break
+            name += i
+        
+        if ok:
+            command = "ok"
+        else:
+            command = "dont"
+        message = '{"message":"hola","command":"' + command + '"}'
+        
+        socket_server = "wss://hydra-ws.abstract-lab.com/ws/{}/".format(name)    
+        asyncio.new_event_loop().run_until_complete(self.web_socket_send(socket_server,message))
+        
