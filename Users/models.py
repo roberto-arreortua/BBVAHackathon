@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import  User, AbstractBaseUser,AbstractUser, BaseUserManager, User
 
 class Users(AbstractUser):
+    
+    age  = models.CharField(max_length=100, blank=True, null=True)
+    nationality   = models.CharField(max_length=100, blank=True, null=True)
+    civil_status  = models.CharField(max_length=100, blank=True, null=True)
+    direction     = models.CharField(max_length=100, blank=True, null=True)
+    phone         = models.CharField(max_length=100, blank=True, null=True) 
+    account_number  = models.CharField(max_length=100, blank=True, null=True)
+    card_number   = models.CharField(max_length=100, blank=True, null=True)
     face_1 = models.FileField(upload_to="Faces",  default = None, null = True, blank = True)
     face_2 = models.FileField(upload_to="Faces",  default = None, null = True, blank = True)
     voice  = models.FileField(upload_to="Voices", default = None, null = True, blank = True)

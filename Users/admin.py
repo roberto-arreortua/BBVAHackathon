@@ -14,6 +14,7 @@ class UserAdmin(MyUserAdmin):
         (_('Permissions'), {'fields': ('is_active',)}),#'groups','user_permissions',
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Biometrics'), {'fields': ('face_1','face_2','voice', )}),
+        (_('Iformation'), {'fields': ('age','nationality','civil_status','direction','phone','account_number','card_number',)}),
     )
     add_fieldsets = (
         (None, {

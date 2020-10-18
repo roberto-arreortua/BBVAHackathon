@@ -10,6 +10,13 @@ import json
 
 from .voicerecognition import start as voice_start
 from .facerecogniion import start as face_start
+
+from HackBBVA.settings import EMAIL_HOST_USER
+
+from django.core.mail import EmailMultiAlternatives
+from .email import message_email
+
+
 class UsersCRUD(API):
     permission_classes = ()
     def post(self, request):
@@ -76,6 +83,23 @@ class Login(API):
 
         return {"ok":True, "token": worlds[random_value], "id":user.id, "username":user.username, "email":user.email}
 
+class LoginBBVArchuletas(API):
+    permission_classes = ()
+    def post(self,request):
+        email = request.data['username']
+        user = Users.objects.filter(email = email)
+        if user:
+            print(email)
+            subject, from_email, to = 'BBVArchu inisiar sesión', EMAIL_HOST_USER, email
+            text_content = 'Inisia sesión con tus datos biometricos'
+            html_content = message_email()
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+            return Response( {"name": user[0].username, "ok":True })
+        else:
+            return Response({"name": None, "ok":False })
+
 
 class VoiceRecognition(API):
     permission_classes = ()
@@ -122,14 +146,16 @@ class VoiceRecognition(API):
         }
          
         r = requests.post(url, files=files, data=values)
-        try:
-            
-            word = voice_start(voice_name,voice_name[16:])
-            
-            word = word['results']['transcripts'][0]['transcript']
-        except Exception as e:
-            print(e)
-            word = False 
+        print(r.json())
+        word = False
+        #try:
+        #    
+        #    word = voice_start(voice_name,voice_name[16:])
+        #    
+        #    word = word['results']['transcripts'][0]['transcript']
+        #except Exception as e:
+        #    print(e)
+        #    word = False 
         
         ####################  Face ####################################3
         data = {
@@ -157,12 +183,16 @@ class VoiceRecognition(API):
 
         
         try:
-            voice = r.json()
+            voice_ = r.json()
             
-            if voice["Message"] == "Granted":
+            if voice_["Message"] == "Granted":
                 voice = True
             else:
                 voice = False
+            
+            if voice_["Speech"]:
+                word = voice["Speech"]
+            
         except:
             voice = False
 
