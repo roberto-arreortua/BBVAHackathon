@@ -77,10 +77,12 @@ class Login(API):
         # Si el usuario no tiene un token, asignarle uno 
         #if not(user.auth_token.key):
         #    Token.objects.create(user=user)
-        worlds = ["mundo", "chimpance","banco", "robot", "automovil", "teclado","cuaderno","celular"]
+        worlds = ["mundo.", "chimpance.","banco.", "robot.", "automovil.", "teclado.","cuaderno.","celular."]
 
         random_value = randrange(len(worlds)-1)
-
+        
+        user.token = worlds[random_value]
+        user.save()
         return {"ok":True, "token": worlds[random_value], "id":user.id, "username":user.username, "email":user.email}
 
 class LoginBBVArchuletas(API):
@@ -89,7 +91,7 @@ class LoginBBVArchuletas(API):
         email = request.data['username']
         user = Users.objects.filter(email = email)
         if user:
-            print(email)
+            
             subject, from_email, to = 'BBVArchu inisiar sesión', EMAIL_HOST_USER, email
             text_content = 'Inisia sesión con tus datos biometricos'
             html_content = message_email()
@@ -111,6 +113,7 @@ class VoiceRecognition(API):
 
         user  = Users.objects.filter(id = user_id)
         user  = user[0]
+        token = user.token.lower()
         voice = user.voice
         voice_name = 'media/' + voice.name
         face = user.face_1
@@ -146,7 +149,7 @@ class VoiceRecognition(API):
         }
          
         r = requests.post(url, files=files, data=values)
-        print(r.json())
+        
         word = False
         #try:
         #    
@@ -189,10 +192,14 @@ class VoiceRecognition(API):
                 voice = True
             else:
                 voice = False
-            
             if voice_["Speech"]:
-                word = voice["Speech"]
-            
+                word = voice_["Speech"].lower()
+                print(word,token)
+                if word == token:
+                    word = True
+                else:
+                    word = False
+                
         except:
             voice = False
 

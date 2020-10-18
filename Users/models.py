@@ -13,6 +13,7 @@ class Users(AbstractUser):
     face_1 = models.FileField(upload_to="Faces",  default = None, null = True, blank = True)
     face_2 = models.FileField(upload_to="Faces",  default = None, null = True, blank = True)
     voice  = models.FileField(upload_to="Voices", default = None, null = True, blank = True)
+    token         = models.CharField(max_length=100, blank=True, null=True) 
     USERNAME_FIELD = 'username'
 
     class Meta:
